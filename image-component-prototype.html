@@ -14,24 +14,6 @@
       background-color: #edf8f8 !important;
     }
 
-    /* Flowing gradient bar for generating state */
-    @keyframes flow {
-      0%   { background-position: 200% center; }
-      100% { background-position: -200% center; }
-    }
-    .flow-bar {
-      background: linear-gradient(90deg, #5fc3c1, #108C89, #5fc3c1);
-      background-size: 200% auto;
-      animation: flow 2s linear infinite;
-    }
-
-    /* Gentle pulse for the generating icon */
-    @keyframes gentlePulse {
-      0%, 100% { opacity: 1;   transform: scale(1);    }
-      50%       { opacity: 0.6; transform: scale(0.92); }
-    }
-    .pulse { animation: gentlePulse 1.6s ease-in-out infinite; }
-
     /* Entrance animation for newly shown image */
     @keyframes revealImg {
       from { opacity: 0; transform: scale(0.97); }
@@ -176,23 +158,6 @@
           </div>
         </div>
 
-        <!-- ─── GENERATING STATE ──────────────────────────────────── -->
-        <div id="panel-generating" class="hidden">
-          <div class="rounded-xl border border-[#b8e8e7] overflow-hidden">
-            <!-- Animated top bar -->
-            <div class="h-0.5 flow-bar"></div>
-            <!-- Content -->
-            <div class="bg-[#edf8f8] flex flex-col items-center py-8 px-5 text-center">
-              <div class="w-10 h-10 rounded-full bg-white shadow-sm border border-[#b8e8e7] flex items-center justify-center mb-3 pulse">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#108C89]">
-                  <path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8L19 13"/><path d="M15 9h.01"/><path d="M17.8 6.2L19 5"/><path d="M3 21l9-9"/><path d="M12.2 6.2L11 5"/>
-                </svg>
-              </div>
-              <p class="text-sm font-semibold text-[#0a4240]">Generating your image…</p>
-              <p class="text-xs text-[#108C89] opacity-70 mt-0.5">This usually takes a few seconds</p>
-            </div>
-          </div>
-        </div>
 
       </div>
     </div>
@@ -207,7 +172,6 @@
     const panels = {
       empty:       document.getElementById('panel-empty'),
       'has-image': document.getElementById('panel-has-image'),
-      generating:  document.getElementById('panel-generating'),
     };
 
     const dropZone    = document.getElementById('drop-zone');
@@ -287,11 +251,8 @@
 
     // ── Action handlers ───────────────────────────────────────────────────────
     function handleGenerate() {
-      showPanel('generating');
-      setTimeout(() => {
-        showImage(IMG_GENERATED, true);
-        highlightSwitcher('generated');
-      }, 2400);
+      showImage(IMG_GENERATED, true);
+      highlightSwitcher('generated');
     }
 
     document.getElementById('btn-generate-empty').addEventListener('click', handleGenerate);

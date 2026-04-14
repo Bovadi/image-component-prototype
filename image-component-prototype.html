@@ -10,8 +10,8 @@
 
     /* Drag-over highlight */
     .dz-active {
-      border-color: #a5b4fc !important;
-      background-color: #eef2ff !important;
+      border-color: #108C89 !important;
+      background-color: #edf8f8 !important;
     }
 
     /* Flowing gradient bar for generating state */
@@ -20,7 +20,7 @@
       100% { background-position: -200% center; }
     }
     .flow-bar {
-      background: linear-gradient(90deg, #c4b5fd, #818cf8, #c4b5fd);
+      background: linear-gradient(90deg, #5fc3c1, #108C89, #5fc3c1);
       background-size: 200% auto;
       animation: flow 2s linear infinite;
     }
@@ -84,7 +84,7 @@
             </div>
             <p class="text-sm font-medium text-stone-700">Drop image here</p>
             <p class="text-xs text-stone-400 mt-0.5">
-              or <span class="text-indigo-500 font-medium hover:text-indigo-600 transition-colors">browse files</span>
+              or <span class="text-[#108C89] font-medium hover:opacity-80 transition-opacity">browse files</span>
             </p>
             <p class="text-[11px] text-stone-300 mt-2.5">PNG · JPG · WebP · Max 5 MB</p>
           </div>
@@ -101,7 +101,7 @@
             id="btn-generate-empty"
             class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-stone-600 border border-stone-200 hover:bg-stone-50 hover:border-stone-300 transition-all group"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-violet-400 group-hover:text-violet-500 transition-colors flex-shrink-0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#108C89] transition-colors flex-shrink-0">
               <path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487z"/>
             </svg>
             Generate with AI
@@ -126,7 +126,7 @@
 
             <!-- AI-generated badge -->
             <div id="ai-badge" class="hidden absolute top-2 left-2">
-              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-violet-600 text-white text-[10px] font-bold shadow-sm tracking-wide">
+              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#108C89] text-white text-[10px] font-bold shadow-sm tracking-wide">
                 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487z"/>
                 </svg>
@@ -154,7 +154,7 @@
               id="btn-generate-image"
               class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-stone-200 text-[12.5px] font-medium text-stone-600 hover:bg-stone-50 hover:border-stone-300 transition-all group"
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-violet-400 group-hover:text-violet-500 transition-colors flex-shrink-0">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#108C89] transition-colors flex-shrink-0">
                 <path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487z"/>
               </svg>
               <span id="gen-label">Generate</span>
@@ -178,18 +178,18 @@
 
         <!-- ─── GENERATING STATE ──────────────────────────────────── -->
         <div id="panel-generating" class="hidden">
-          <div class="rounded-xl border border-violet-100 overflow-hidden">
+          <div class="rounded-xl border border-[#b8e8e7] overflow-hidden">
             <!-- Animated top bar -->
             <div class="h-0.5 flow-bar"></div>
             <!-- Content -->
-            <div class="bg-violet-50/50 flex flex-col items-center py-8 px-5 text-center">
-              <div class="w-10 h-10 rounded-full bg-white shadow-sm border border-violet-100 flex items-center justify-center mb-3 pulse">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-violet-500">
+            <div class="bg-[#edf8f8] flex flex-col items-center py-8 px-5 text-center">
+              <div class="w-10 h-10 rounded-full bg-white shadow-sm border border-[#b8e8e7] flex items-center justify-center mb-3 pulse">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#108C89]">
                   <path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487z"/>
                 </svg>
               </div>
-              <p class="text-sm font-semibold text-violet-900">Generating your image…</p>
-              <p class="text-xs text-violet-400 mt-0.5">This usually takes a few seconds</p>
+              <p class="text-sm font-semibold text-[#0a4240]">Generating your image…</p>
+              <p class="text-xs text-[#108C89] opacity-70 mt-0.5">This usually takes a few seconds</p>
             </div>
           </div>
         </div>
@@ -231,7 +231,7 @@
     }
 
     const IMG_UPLOADED  = svgDataUri('#f3f4f6', '#9ca3af', 'Uploaded Image');
-    const IMG_GENERATED = svgDataUri('#ede9fe', '#7c3aed', 'AI Generated Image');
+    const IMG_GENERATED = svgDataUri('#edf8f8', '#108C89', 'AI Generated Image');
 
     // ── Panel helpers ─────────────────────────────────────────────────────────
     function showPanel(name) {

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Component — Prototype</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif; }
+
+    /* Drag-over highlight */
+    .dz-active {
+      border-color: #a5b4fc !important;
+      background-color: #eef2ff !important;
+    }
+
+    /* Flowing gradient bar for generating state */
+    @keyframes flow {
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
+    .flow-bar {
+      background: linear-gradient(90deg, #c4b5fd, #818cf8, #c4b5fd);
+      background-size: 200% auto;
+      animation: flow 2s linear infinite;
+    }
+
+    /* Gentle pulse for the generating icon */
+    @keyframes gentlePulse {
+      0%, 100% { opacity: 1;   transform: scale(1);    }
+      50%       { opacity: 0.6; transform: scale(0.92); }
+    }
+    .pulse { animation: gentlePulse 1.6s ease-in-out infinite; }
+
+    /* Entrance animation for newly shown image */
+    @keyframes revealImg {
+      from { opacity: 0; transform: scale(0.97); }
+      to   { opacity: 1; transform: scale(1);    }
+    }
+    .reveal { animation: revealImg 0.22s ease-out forwards; }
+  </style>
+</head>
+<body class="bg-stone-100 min-h-screen flex flex-col items-center justify-center gap-5 p-8">
+
+  <!-- ── Prototype state switcher ─────────────────────────────────── -->
+  <div class="flex items-center gap-1 bg-white rounded-full px-1 py-1 shadow-sm border border-stone-200">
+    <span class="text-[11px] font-medium text-stone-400 pl-2 pr-1 select-none">State:</span>
+    <button data-for="empty"     onclick="switchState('empty')"     class="switcher px-3 py-1.5 rounded-full text-xs font-medium transition-all">Empty</button>
+    <button data-for="uploaded"  onclick="switchState('uploaded')"  class="switcher px-3 py-1.5 rounded-full text-xs font-medium transition-all">Uploaded</button>
+    <button data-for="generated" onclick="switchState('generated')" class="switcher px-3 py-1.5 rounded-full text-xs font-medium transition-all">Generated</button>
+  </div>
+
+  <!-- ── Component ────────────────────────────────────────────────── -->
+  <div class="w-full max-w-md">
+    <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+
+      <!-- Header -->
+      <div class="px-5 pt-5 pb-4">
+        <h2 class="text-sm font-semibold text-stone-900 leading-none">Slide Image</h2>
+        <p class="text-xs text-stone-400 mt-1 leading-snug">
+          Landscape images with transparent backgrounds work best.
+          Ideal size: 650 × 315.
+        </p>
+      </div>
+
+      <!-- Body -->
+      <div class="px-4 pb-4 space-y-2.5">
+
+        <!-- ─── EMPTY STATE ──────────────────────────────────────── -->
+        <div id="panel-empty" class="space-y-2.5">
+
+          <!-- Drop zone -->
+          <div
+            id="drop-zone"
+            role="button"
+            tabindex="0"
+            aria-label="Drop an image here or click to browse files"
+            class="border-2 border-dashed border-stone-200 rounded-xl py-7 px-5 flex flex-col items-center text-center cursor-pointer select-none transition-all duration-150 hover:border-stone-300 hover:bg-stone-50 group"
+          >
+            <div class="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center mb-3 group-hover:bg-stone-200 transition-colors duration-150">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" class="text-stone-400">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+              </svg>
+            </div>
+            <p class="text-sm font-medium text-stone-700">Drop image here</p>
+            <p class="text-xs text-stone-400 mt-0.5">
+              or <span class="text-indigo-500 font-medium hover:text-indigo-600 transition-colors">browse files</span>
+            </p>
+            <p class="text-[11px] text-stone-300 mt-2.5">PNG · JPG · WebP · Max 5 MB</p>
+          </div>
+
+          <!-- Divider -->
+          <div class="flex items-center gap-3">
+            <div class="flex-1 h-px bg-stone-100"></div>
+            <span class="text-[10px] font-semibold uppercase tracking-widest text-stone-300 select-none">or</span>
+            <div class="flex-1 h-px bg-stone-100"></div>
+          </div>
+
+          <!-- Generate with AI -->
+          <button
+            id="btn-generate-empty"
+            class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-stone-600 border border-stone-200 hover:bg-stone-50 hover:border-stone-300 transition-all group"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-violet-400 group-hover:text-violet-500 transition-colors flex-shrink-0">
+              <path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487z"/>
+            </svg>
+            Generate with AI
+          </button>
+        </div>
+
+        <!-- ─── HAS-IMAGE STATE ───────────────────────────────────── -->
+        <div id="panel-has-image" class="hidden space-y-2.5">
+
+          <!-- Preview -->
+          <div
+            class="relative rounded-xl overflow-hidden border border-stone-100"
+            style="background: repeating-conic-gradient(#f5f4f2 0% 25%, #ebe8e4 0% 50%) 0 0 / 20px 20px;"
+          >
+            <img
+              id="preview-img"
+              src=""
+              alt="Slide image preview"
+              class="relative w-full object-contain"
+              style="max-height: 200px;"
+            />
+
+            <!-- AI-generated badge -->
+            <div id="ai-badge" class="hidden absolute top-2 left-2">
+              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-violet-600 text-white text-[10px] font-bold shadow-sm tracking-wide">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487z"/>
+                </svg>
+                AI
+              </span>
+            </div>
+          </div>
+
+          <!-- Action row -->
+          <div class="flex items-center gap-1.5">
+
+            <!-- Replace -->
+            <button
+              id="btn-replace"
+              class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-stone-200 text-[12.5px] font-medium text-stone-600 hover:bg-stone-50 hover:border-stone-300 transition-all"
+            >
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="text-stone-400">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+              </svg>
+              Replace
+            </button>
+
+            <!-- Generate / Regenerate -->
+            <button
+              id="btn-generate-image"
+              class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-stone-200 text-[12.5px] font-medium text-stone-600 hover:bg-stone-50 hover:border-stone-300 transition-all group"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-violet-400 group-hover:text-violet-500 transition-colors flex-shrink-0">
+                <path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487z"/>
+              </svg>
+              <span id="gen-label">Generate</span>
+            </button>
+
+            <!-- Separator -->
+            <div class="h-4 w-px bg-stone-200 mx-0.5 flex-shrink-0"></div>
+
+            <!-- Remove -->
+            <button
+              id="btn-remove"
+              aria-label="Remove image"
+              class="w-9 h-9 flex items-center justify-center flex-shrink-0 rounded-lg border border-stone-200 text-stone-300 hover:text-red-400 hover:bg-red-50 hover:border-red-200 transition-all"
+            >
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ─── GENERATING STATE ──────────────────────────────────── -->
+        <div id="panel-generating" class="hidden">
+          <div class="rounded-xl border border-violet-100 overflow-hidden">
+            <!-- Animated top bar -->
+            <div class="h-0.5 flow-bar"></div>
+            <!-- Content -->
+            <div class="bg-violet-50/50 flex flex-col items-center py-8 px-5 text-center">
+              <div class="w-10 h-10 rounded-full bg-white shadow-sm border border-violet-100 flex items-center justify-center mb-3 pulse">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-violet-500">
+                  <path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487z"/>
+                </svg>
+              </div>
+              <p class="text-sm font-semibold text-violet-900">Generating your image…</p>
+              <p class="text-xs text-violet-400 mt-0.5">This usually takes a few seconds</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden file inputs -->
+  <input type="file" id="file-upload"  accept="image/*" class="sr-only">
+  <input type="file" id="file-replace" accept="image/*" class="sr-only">
+
+  <script>
+    // ── Element refs ──────────────────────────────────────────────────────────
+    const panels = {
+      empty:       document.getElementById('panel-empty'),
+      'has-image': document.getElementById('panel-has-image'),
+      generating:  document.getElementById('panel-generating'),
+    };
+
+    const dropZone    = document.getElementById('drop-zone');
+    const previewImg  = document.getElementById('preview-img');
+    const aiBadge     = document.getElementById('ai-badge');
+    const genLabel    = document.getElementById('gen-label');
+    const fileUpload  = document.getElementById('file-upload');
+    const fileReplace = document.getElementById('file-replace');
+
+    // ── Placeholder images (inline SVGs, no external deps) ───────────────────
+    function svgDataUri(bg, textColor, label) {
+      const svg = [
+        `<svg xmlns="http://www.w3.org/2000/svg" width="650" height="315">`,
+        `<rect width="650" height="315" fill="${bg}"/>`,
+        `<text x="325" y="157" dominant-baseline="middle" text-anchor="middle"`,
+        ` font-family="-apple-system,system-ui,sans-serif" font-size="17" fill="${textColor}">`,
+        label,
+        `</text></svg>`,
+      ].join('');
+      return 'data:image/svg+xml;base64,' + btoa(svg);
+    }
+
+    const IMG_UPLOADED  = svgDataUri('#f3f4f6', '#9ca3af', 'Uploaded Image');
+    const IMG_GENERATED = svgDataUri('#ede9fe', '#7c3aed', 'AI Generated Image');
+
+    // ── Panel helpers ─────────────────────────────────────────────────────────
+    function showPanel(name) {
+      Object.entries(panels).forEach(([key, el]) => {
+        el.classList.toggle('hidden', key !== name);
+      });
+    }
+
+    function showImage(src, isGenerated) {
+      previewImg.classList.remove('reveal');
+      void previewImg.offsetWidth;
+      previewImg.classList.add('reveal');
+      previewImg.src = src;
+      aiBadge.classList.toggle('hidden', !isGenerated);
+      genLabel.textContent = isGenerated ? 'Regenerate' : 'Generate';
+      showPanel('has-image');
+    }
+
+    // ── Demo state switcher ───────────────────────────────────────────────────
+    function switchState(state) {
+      highlightSwitcher(state);
+      if (state === 'empty') {
+        showPanel('empty');
+      } else if (state === 'uploaded') {
+        showImage(IMG_UPLOADED, false);
+      } else if (state === 'generated') {
+        showImage(IMG_GENERATED, true);
+      }
+    }
+
+    function highlightSwitcher(active) {
+      document.querySelectorAll('.switcher').forEach(btn => {
+        const on = btn.dataset.for === active;
+        btn.className = `switcher px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+          on ? 'bg-stone-900 text-white' : 'text-stone-500 hover:text-stone-700'
+        }`;
+      });
+    }
+
+    // ── File handling ─────────────────────────────────────────────────────────
+    function readFile(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        showImage(e.target.result, false);
+        highlightSwitcher('uploaded');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    fileUpload.addEventListener('change',  e => { readFile(e.target.files[0]); e.target.value = ''; });
+    fileReplace.addEventListener('change', e => { readFile(e.target.files[0]); e.target.value = ''; });
+
+    // ── Action handlers ───────────────────────────────────────────────────────
+    function handleGenerate() {
+      showPanel('generating');
+      setTimeout(() => {
+        showImage(IMG_GENERATED, true);
+        highlightSwitcher('generated');
+      }, 2400);
+    }
+
+    document.getElementById('btn-generate-empty').addEventListener('click', handleGenerate);
+    document.getElementById('btn-generate-image').addEventListener('click', handleGenerate);
+
+    document.getElementById('btn-replace').addEventListener('click', () => fileReplace.click());
+
+    document.getElementById('btn-remove').addEventListener('click', () => {
+      previewImg.src = '';
+      showPanel('empty');
+      highlightSwitcher('empty');
+    });
+
+    // ── Drop zone interactions ────────────────────────────────────────────────
+    dropZone.addEventListener('click', () => fileUpload.click());
+    dropZone.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileUpload.click(); }
+    });
+
+    ['dragenter', 'dragover'].forEach(evt =>
+      dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.add('dz-active'); })
+    );
+    ['dragleave', 'dragend'].forEach(evt =>
+      dropZone.addEventListener(evt, () => dropZone.classList.remove('dz-active'))
+    );
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('dz-active');
+      readFile(e.dataTransfer.files[0]);
+    });
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    switchState('empty');
+  </script>
+</body>
+</html>
